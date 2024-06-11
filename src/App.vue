@@ -44,8 +44,8 @@ const createDeposit = async ({ userId, amount, description }) => {
   }
   try {
     await fetch(url, options)
-    coins.value = 0
   } finally {
+    coins.value = 0
     showAlert?.('Коины успешно выведены!')
     hideMainButtonProgress?.()
   }
