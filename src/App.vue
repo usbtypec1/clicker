@@ -33,6 +33,7 @@ const text = computed(() => coins.value === 0 ? 'Закрыть' : 'Вывест
 
 
 const createDeposit = ({userId, amount, description}) => {
+  showMainButtonProgress?.()
   const url = `${import.meta.env.VITE_API_URL}/deposit`
   const options = {
     method: 'POST',
@@ -44,13 +45,13 @@ const createDeposit = ({userId, amount, description}) => {
   fetch(url, options)
     .then(response => response.json())
     .then(responseData => {
-      if (responseData?.id) {
-        showAlert('Коины успешно выведены!')
-      } else {
-        showAlert('Ошибка! Попробуйте позже!')
-      }
+      coins.value = 0
+      showAlert('Коины успешно выведены!')
     })
     .catch(() => showAlert('Ошибка! Попробуйте позже!'))
+    .finally(() => {
+      hideMainButtonProgress?.()
+    })
 }
 
 const onMainButtonClick = () => {
@@ -64,12 +65,7 @@ const onMainButtonClick = () => {
       showAlert?.('Ошибка! Пользователь не найден!')
       return
     }
-    showMainButtonProgress?.()
-    try {
-      createDeposit({ userId, amount: coins.value, description: 'Кликер' })
-    } finally {
-      hideMainButtonProgress?.()
-    }
+    createDeposit({ userId, amount: coins.value, description: 'Кликер' })
   })
 }
 
