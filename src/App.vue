@@ -14,15 +14,17 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { MainButton } from 'vue-tg'
 import { useWebAppPopup, useWebAppHapticFeedback, useWebAppMainButton } from 'vue-tg'
 import { useWebApp } from 'vue-tg'
+import { useWebAppViewport } from 'vue-tg'
 
 const { close } = useWebApp()
 const { hideMainButtonProgress, showMainButtonProgress } = useWebAppMainButton()
 const { showAlert, showConfirm } = useWebAppPopup()
 const { impactOccurred } = useWebAppHapticFeedback()
+const { expand } = useWebAppViewport()
 
 
 const coins = ref(0)
@@ -53,4 +55,8 @@ const onClick = () => {
     coins.value += getRandomValueBetween(10, 20)
   }, 50)
 }
+
+onMounted(() => {
+  expand?.()
+})
 </script>
