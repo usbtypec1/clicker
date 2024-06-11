@@ -9,19 +9,21 @@
         src="https://i.imgur.com/hmgDUOm.jpeg"
       />
     </div>
-    <MainButton @click="onMainButtonClick"/>
+    <MainButton :text="text" @click="onMainButtonClick"/>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { MainButton } from 'vue-tg'
 import { useWebAppPopup } from 'vue-tg'
 
 const { showAlert } = useWebAppPopup()
 
+
 const coins = ref(0)
 const scale = ref('scale-100')
+const text = computed(() => coins.value === 0 ? 'Закрыть' : 'Вывести коины')
 
 const onMainButtonClick = () => {
   showAlert?.('Hello from Vue 3!')
