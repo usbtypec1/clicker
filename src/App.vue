@@ -32,7 +32,7 @@ const scale = ref('scale-100')
 const text = computed(() => coins.value === 0 ? 'Закрыть' : 'Вывести коины')
 
 
-const createDeposit = async ({userId, amount, description}) => {
+const createDeposit = async ({ userId, amount, description }) => {
   showMainButtonProgress?.()
   const url = `${import.meta.env.VITE_API_URL}/deposit`
   const options = {
@@ -46,6 +46,8 @@ const createDeposit = async ({userId, amount, description}) => {
     await fetch(url, options)
     coins.value = 0
     showAlert?.('Коины успешно выведены!')
+  } catch (error) {
+    showAlert?.(`Ошибка! Попробуйте позже! ${error}`)
   } finally {
     hideMainButtonProgress?.()
   }
@@ -56,14 +58,12 @@ const onMainButtonClick = async () => {
     close?.()
     return
   }
-  showConfirm?.(`Вы уверены что хотите вывести ${coins.value} коинов?`, async () => {
-    const userId = initDataUnsafe?.user?.id
-    if (!userId) {
-      showAlert?.('Ошибка! Пользователь не найден!')
-      return
-    }
-    await createDeposit({ userId, amount: coins.value, description: 'Кликер' })
-  })
+  const userId = initDataUnsafe?.user?.id
+  if (!userId) {
+    showAlert?.('Ошибка! Пользователь не найден!')
+    return
+  }
+  await createDeposit({ userId, amount: coins.value, description: 'Кликер' })
 }
 
 const getRandomValueBetween = (min, max) => {
