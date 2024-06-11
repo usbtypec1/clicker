@@ -34,14 +34,11 @@ const onMainButtonClick = () => {
     close?.()
     return
   }
-  showMainButtonProgress?.()
-  setTimeout(() => {
+  showConfirm?.(`Вы уверены что хотите вывести ${coins.value} коинов?`, () => {
+    showMainButtonProgress?.()
+    showAlert?.('Коины успешно выведены!')
     hideMainButtonProgress?.()
-    showConfirm?.('Вы уверены?', () => {
-      showAlert?.('Коины успешно выведены!')
-    })
-    coins.value = 0
-  }, 2000)
+  })
 }
 
 const getRandomValueBetween = (min, max) => {
