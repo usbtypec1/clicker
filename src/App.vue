@@ -46,9 +46,8 @@ const createDeposit = ({userId, amount, description}) => {
     .then(response => response.json())
     .then(responseData => {
       coins.value = 0
-      showAlert('Коины успешно выведены!')
+      showAlert?.('Коины успешно выведены!')
     })
-    .catch(() => showAlert('Ошибка! Попробуйте позже!'))
     .finally(() => {
       hideMainButtonProgress?.()
     })
