@@ -31,6 +31,28 @@ const coins = ref(0)
 const scale = ref('scale-100')
 const text = computed(() => coins.value === 0 ? 'Закрыть' : 'Вывести коины')
 
+
+const createDeposit = ({userId, amount, description}) => {
+  const url = `${import.meta.env.VITE_API_URL}/deposit`
+  const options = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ user_id: userId, amount, description }),
+  }
+  fetch(url, options)
+    .then(response => response.json())
+    .then(responseData => {
+      if (responseData?.id) {
+        showAlert('Коины успешно выведены!')
+      } else {
+        showAlert('Ошибка! Попробуйте позже!')
+      }
+    })
+    .catch(() => showAlert('Ошибка! Попробуйте позже!'))
+}
+
 const onMainButtonClick = () => {
   if (coins.value === 0) {
     close?.()
@@ -44,25 +66,7 @@ const onMainButtonClick = () => {
     }
     showMainButtonProgress?.()
     try {
-      fetch(`${import.meta.env.VITE_API_URL}/deposit`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          user_id: userId,
-          amount: coins.value,
-          description: 'Кликер',
-        }),
-      })
-        .then(response => response.json())
-        .then(responseData => {
-          if (responseData?.id) {
-            showAlert?.('Коины успешно выведены!')
-          } else {
-            showAlert?.('Ошибка! Попробуйте позже!')
-          }
-        })
+      createDeposit({ userId, amount: coins.value, description: 'Кликер' })
     } finally {
       hideMainButtonProgress?.()
     }
