@@ -32,7 +32,7 @@ const scale = ref('scale-100')
 const text = computed(() => coins.value === 0 ? 'Закрыть' : 'Вывести коины')
 
 
-const createDeposit = ({userId, amount, description}) => {
+const createDeposit = async ({userId, amount, description}) => {
   showMainButtonProgress?.()
   const url = `${import.meta.env.VITE_API_URL}/deposit`
   const options = {
@@ -42,29 +42,27 @@ const createDeposit = ({userId, amount, description}) => {
     },
     body: JSON.stringify({ user_id: userId, amount, description }),
   }
-  fetch(url, options)
-    .then(response => response.json())
-    .then(responseData => {
-      coins.value = 0
-      showAlert?.('Коины успешно выведены!')
-    })
-    .finally(() => {
-      hideMainButtonProgress?.()
-    })
+  try {
+    await fetch(url, options)
+    coins.value = 0
+    showAlert?.('Коины успешно выведены!')
+  } finally {
+    hideMainButtonProgress?.()
+  }
 }
 
-const onMainButtonClick = () => {
+const onMainButtonClick = async () => {
   if (coins.value === 0) {
     close?.()
     return
   }
-  showConfirm?.(`Вы уверены что хотите вывести ${coins.value} коинов?`, () => {
+  showConfirm?.(`Вы уверены что хотите вывести ${coins.value} коинов?`, async () => {
     const userId = initDataUnsafe?.user?.id
     if (!userId) {
       showAlert?.('Ошибка! Пользователь не найден!')
       return
     }
-    createDeposit({ userId, amount: coins.value, description: 'Кликер' })
+    await createDeposit({ userId, amount: coins.value, description: 'Кликер' })
   })
 }
 
