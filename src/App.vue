@@ -16,9 +16,11 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { MainButton } from 'vue-tg'
-import { useWebAppPopup, useWebAppHapticFeedback } from 'vue-tg'
+import { useWebAppPopup, useWebAppHapticFeedback, hideMainButtonProgress, showMainButtonProgress } from 'vue-tg'
+import { useWebApp } from 'vue-tg'
 
-const { showAlert } = useWebAppPopup()
+const { close } = useWebApp()
+const { showAlert, showConfirm, showPopup } = useWebAppPopup()
 const { impactOccurred } = useWebAppHapticFeedback()
 
 
@@ -27,7 +29,18 @@ const scale = ref('scale-100')
 const text = computed(() => coins.value === 0 ? 'Закрыть' : 'Вывести коины')
 
 const onMainButtonClick = () => {
-  showAlert?.('Hello from Vue 3!')
+  if (coins.value === 0) {
+    close?.()
+    return
+  }
+  showMainButtonProgress?.()
+  setTimeout(() => {
+    hideMainButtonProgress?.()
+    showConfirm?.('Вы уверены?', () => {
+      showAlert?.('Коины успешно выведены!', )
+    })
+    coins.value = 0
+  }, 2000)
 }
 
 const getRandomValueBetween = (min, max) => {
@@ -35,11 +48,11 @@ const getRandomValueBetween = (min, max) => {
 }
 
 const onClick = () => {
-  impactOccurred?.('medium')
+  impactOccurred?.('light')
   scale.value = 'scale-75'
   setTimeout(() => {
     scale.value = 'scale-100'
-    coins.value += getRandomValueBetween(1000000, 2000000)
+    coins.value += getRandomValueBetween(10, 20)
   }, 50)
 }
 </script>
