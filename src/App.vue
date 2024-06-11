@@ -16,11 +16,12 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { MainButton } from 'vue-tg'
-import { useWebAppPopup, useWebAppHapticFeedback, hideMainButtonProgress, showMainButtonProgress } from 'vue-tg'
+import { useWebAppPopup, useWebAppHapticFeedback, useWebAppMainButton } from 'vue-tg'
 import { useWebApp } from 'vue-tg'
 
 const { close } = useWebApp()
-const { showAlert, showConfirm, showPopup } = useWebAppPopup()
+const { hideMainButtonProgress, showMainButtonProgress } = useWebAppMainButton()
+const { showAlert, showConfirm } = useWebAppPopup()
 const { impactOccurred } = useWebAppHapticFeedback()
 
 
@@ -37,7 +38,7 @@ const onMainButtonClick = () => {
   setTimeout(() => {
     hideMainButtonProgress?.()
     showConfirm?.('Вы уверены?', () => {
-      showAlert?.('Коины успешно выведены!', )
+      showAlert?.('Коины успешно выведены!')
     })
     coins.value = 0
   }, 2000)
