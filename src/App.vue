@@ -78,8 +78,8 @@ const onClick = () => {
   scale.value = 'scale-75'
   setTimeout(() => {
     scale.value = 'scale-100'
-    coins.value += getRandomValueBetween(10, 20)
-  }, 35)
+    coins.value += getRandomValueBetween(30, 60)
+  }, 75)
 }
 
 onMounted(() => {
