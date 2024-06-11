@@ -37,14 +37,14 @@ const onMainButtonClick = () => {
     return
   }
   showConfirm?.(`Вы уверены что хотите вывести ${coins.value} коинов?`, () => {
-    const userId = initDataUnsafe?.user_id
+    const userId = initDataUnsafe?.user?.id
     if (!userId) {
       showAlert?.('Ошибка! Пользователь не найден!')
       return
     }
     showMainButtonProgress?.()
     try {
-      fetch('{import.meta.env.VITE_API_URL}/deposit', {
+      fetch(`${import.meta.env.VITE_API_URL}/deposit`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
