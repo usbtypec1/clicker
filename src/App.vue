@@ -20,7 +20,7 @@ import { useWebAppPopup, useWebAppHapticFeedback, useWebAppMainButton } from 'vu
 import { useWebApp } from 'vue-tg'
 import { useWebAppViewport } from 'vue-tg'
 
-const { close } = useWebApp()
+const { close, initDataUnsafe } = useWebApp()
 const { hideMainButtonProgress, showMainButtonProgress } = useWebAppMainButton()
 const { showAlert, showConfirm } = useWebAppPopup()
 const { impactOccurred } = useWebAppHapticFeedback()
@@ -37,9 +37,35 @@ const onMainButtonClick = () => {
     return
   }
   showConfirm?.(`Вы уверены что хотите вывести ${coins.value} коинов?`, () => {
+    const userId = initDataUnsafe?.user_id
+    if (!userId) {
+      showAlert?.('Ошибка! Пользователь не найден!')
+      return
+    }
     showMainButtonProgress?.()
-    showAlert?.('Коины успешно выведены!')
-    hideMainButtonProgress?.()
+    try {
+      fetch('{import.meta.env.VITE_API_URL}/deposit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          user_id: userId,
+          amount: coins.value,
+          description: 'Кликер',
+        }),
+      })
+        .then(response => response.json())
+        .then(responseData => {
+          if (responseData?.id) {
+            showAlert?.('Коины успешно выведены!')
+          } else {
+            showAlert?.('Ошибка! Попробуйте позже!')
+          }
+        })
+    } finally {
+      hideMainButtonProgress?.()
+    }
   })
 }
 
@@ -53,7 +79,7 @@ const onClick = () => {
   setTimeout(() => {
     scale.value = 'scale-100'
     coins.value += getRandomValueBetween(10, 20)
-  }, 50)
+  }, 35)
 }
 
 onMounted(() => {
