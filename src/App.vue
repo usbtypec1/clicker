@@ -16,9 +16,10 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { MainButton } from 'vue-tg'
-import { useWebAppPopup } from 'vue-tg'
+import { useWebAppPopup, useWebAppHapticFeedback } from 'vue-tg'
 
 const { showAlert } = useWebAppPopup()
+const { impactOccurred } = useWebAppHapticFeedback()
 
 
 const coins = ref(0)
@@ -34,6 +35,7 @@ const getRandomValueBetween = (min, max) => {
 }
 
 const onClick = () => {
+  impactOccurred?.('medium')
   scale.value = 'scale-75'
   setTimeout(() => {
     scale.value = 'scale-100'
